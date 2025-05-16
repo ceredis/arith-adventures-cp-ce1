@@ -55,7 +55,12 @@ export const getPhaseMessage = (
     case 'blueCount':
       return "Maintenant, compte les billes bleues et écris le nombre que tu vas trouver.";
     case 'totalCount':
-      return `Tu as compté ${redCount} billes rouges et ${blueCount} billes bleues. Quel est le nombre total de billes ? Clique sur 'Calculer' pour faire l'opération.`;
+      // Message adapté selon le niveau
+      if (moduleLevel === 1) {
+        return `Tu as compté ${redCount} billes rouges et ${blueCount} billes bleues. Quel est le nombre total de billes ?`;
+      } else {
+        return `Tu as compté ${redCount} billes rouges et ${blueCount} billes bleues. Quel est le nombre total de billes ? Clique sur 'Calculer' pour faire l'opération.`;
+      }
     case 'verify':
       if (isCorrect) {
         return `Bravo ! Tu as trouvé la bonne réponse en ${attempts} essai${attempts > 1 ? 's' : ''}. Clique sur Continuer`;

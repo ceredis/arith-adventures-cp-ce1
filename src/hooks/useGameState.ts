@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { generateRandomBalls, getPhaseMessage, GameModule, ModuleLevel } from '@/utils/gameLogic';
 
@@ -93,9 +92,17 @@ export const useGameState = () => {
     // Comparer avec le nombre réel de billes bleues
     if (!isNaN(parsedCount) && parsedCount === blueBalls) {
       setUserBlueCount(parsedCount);
-      // Pour tous les niveaux, passer à la phase de schématisation
-      setPhase('vennDiagram');
-      setShowBalls(false);
+      
+      // Modification: Pour niveau 1, passer directement à la phase totalCount (sauter vennDiagram)
+      if (moduleLevel === 1) {
+        setPhase('totalCount');
+        // Ne pas cacher les billes pour le niveau 1
+        setShowBalls(true);
+      } else {
+        // Pour les autres niveaux, continuer avec le diagramme de Venn
+        setPhase('vennDiagram');
+        setShowBalls(false);
+      }
     } else {
       setMessage("Tu n'as pas bien compté, recommence.");
       setSpeak(true);

@@ -176,20 +176,22 @@ const GameControls: React.FC<GameControlsProps> = ({
           />
           <Button type="submit" className="ml-2">Valider</Button>
           
-          {/* Fixed Calculate button visibility - always show it in totalCount phase */}
-          <Button 
-            type="button" 
-            onClick={() => setCalculationOpen(true)}
-            variant="secondary" 
-            className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300 flex items-center gap-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect width="16" height="16" x="4" y="4" rx="2" />
-              <line x1="8" x2="16" y1="12" y2="12" />
-              <line x1="12" x2="12" y1="8" y2="16" />
-            </svg>
-            Calculer
-          </Button>
+          {/* Montrer le bouton Calculer seulement si niveau > 1 */}
+          {level > 1 && (
+            <Button 
+              type="button" 
+              onClick={() => setCalculationOpen(true)}
+              variant="secondary" 
+              className="ml-2 bg-blue-100 hover:bg-blue-200 text-blue-800 border border-blue-300 flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect width="16" height="16" x="4" y="4" rx="2" />
+                <line x1="8" x2="16" y1="12" y2="12" />
+                <line x1="12" x2="12" y1="8" y2="16" />
+              </svg>
+              Calculer
+            </Button>
+          )}
         </form>
       )}
       

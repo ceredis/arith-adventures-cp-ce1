@@ -50,21 +50,25 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         level={moduleLevel}
       />
       
-      {/* Diagramme de Venn pour tous les niveaux */}
-      <VennDiagram
-        redBalls={redBalls}
-        blueBalls={blueBalls}
-        onSubmit={handleSubmitVennDiagram}
-        isVisible={phase === 'vennDiagram'}
-      />
+      {/* Diagramme de Venn uniquement pour les niveaux > 1 */}
+      {moduleLevel > 1 && (
+        <VennDiagram
+          redBalls={redBalls}
+          blueBalls={blueBalls}
+          onSubmit={handleSubmitVennDiagram}
+          isVisible={phase === 'vennDiagram'}
+        />
+      )}
       
-      {/* Saisie de l'équation pour tous les niveaux */}
-      <EquationInput
-        redBalls={redBalls}
-        blueBalls={blueBalls}
-        onSubmit={handleSubmitEquation}
-        isVisible={phase === 'equation'}
-      />
+      {/* Saisie de l'équation uniquement pour les niveaux > 1 */}
+      {moduleLevel > 1 && (
+        <EquationInput
+          redBalls={redBalls}
+          blueBalls={blueBalls}
+          onSubmit={handleSubmitEquation}
+          isVisible={phase === 'equation'}
+        />
+      )}
       
       {/* Standard game controls */}
       <GameControls 
