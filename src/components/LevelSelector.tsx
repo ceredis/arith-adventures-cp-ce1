@@ -1,7 +1,6 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { GameModule, ModuleLevel } from '@/utils/gameLogic';
 
 interface LevelSelectorProps {
@@ -11,64 +10,56 @@ interface LevelSelectorProps {
   onChangeLevel: (level: ModuleLevel) => void;
 }
 
-const LevelSelector: React.FC<LevelSelectorProps> = ({ 
-  gameModule, 
-  moduleLevel, 
-  onChangeModule, 
-  onChangeLevel 
+const LevelSelector: React.FC<LevelSelectorProps> = ({
+  gameModule,
+  moduleLevel,
+  onChangeModule,
+  onChangeLevel
 }) => {
-  const [open, setOpen] = useState<boolean>(false);
-
-  const handleModuleChange = (module: GameModule) => {
-    onChangeModule(module);
-    // Ouvrir automatiquement le dropdown pour le Module 1
-    if (module === 1) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  };
-
-  const handleLevelSelect = (level: ModuleLevel) => {
-    onChangeLevel(level);
-    setOpen(false);
-  };
+  // Déterminer quels niveaux afficher selon le module sélectionné
+  const availableLevels = gameModule === 1 
+    ? [1, 2] // Module 1: niveaux 1 et 2
+    : [3, 4, 5]; // Module 2: niveaux 3, 4 et 5
 
   return (
-    <div className="flex justify-center mb-4 space-x-4">
-      <Popover open={open && gameModule === 1} onOpenChange={setOpen}>
-        <PopoverTrigger asChild>
-          <Button 
-            variant={gameModule === 1 ? "default" : "outline"} 
-            onClick={() => handleModuleChange(1)}
-            className={gameModule === 1 ? "bg-navy-blue hover:bg-navy-blue-dark" : ""}
-          >
-            Module 1
-          </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-56 p-0">
-          <div className="grid grid-cols-1 divide-y">
-            {[1, 2, 3, 4].map((level) => (
+    <div className="mb-6">
+      <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex-1">
+          <h3 className="text-lg font-medium mb-2">Module</h3>
+          <div className="flex gap-2">
+            <Button
+              onClick={() => onChangeModule(1)}
+              variant={gameModule === 1 ? "default" : "outline"}
+              className={`flex-1 ${gameModule === 1 ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+            >
+              Module 1
+            </Button>
+            <Button
+              onClick={() => onChangeModule(2)}
+              variant={gameModule === 2 ? "default" : "outline"}
+              className={`flex-1 ${gameModule === 2 ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
+            >
+              Module 2
+            </Button>
+          </div>
+        </div>
+        
+        <div className="flex-1">
+          <h3 className="text-lg font-medium mb-2">Niveau</h3>
+          <div className="flex gap-2">
+            {availableLevels.map((level) => (
               <Button
                 key={level}
-                variant="ghost"
-                className={`justify-start px-4 py-2 ${moduleLevel === level ? 'bg-muted' : ''}`}
-                onClick={() => handleLevelSelect(level as ModuleLevel)}
+                onClick={() => onChangeLevel(level as ModuleLevel)}
+                variant={moduleLevel === level ? "default" : "outline"}
+                className={`flex-1 ${moduleLevel === level ? 'bg-blue-600 hover:bg-blue-700' : ''}`}
               >
                 Niveau {level}
               </Button>
             ))}
           </div>
-        </PopoverContent>
-      </Popover>
-      
-      <Button 
-        variant={gameModule === 2 ? "default" : "outline"} 
-        onClick={() => handleModuleChange(2)}
-        className={gameModule === 2 ? "bg-navy-blue hover:bg-navy-blue-dark" : ""}
-      >
-        Module 2
-      </Button>
+        </div>
+      </div>
     </div>
   );
 };

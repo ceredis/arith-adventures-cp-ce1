@@ -5,7 +5,7 @@ import MainNavigation from './MainNavigation';
 const HomeHeader: React.FC = () => {
   return (
     <header className="relative">
-      {/* Bande avec logos et navigation */}
+      {/* Bande avec logo et navigation */}
       <div className="bg-white py-3 px-4 flex items-center justify-between shadow-sm">
         <img 
           src="/lovable-uploads/60618cea-5df4-4068-8fdb-73aacd00de0d.png" 
@@ -15,11 +15,7 @@ const HomeHeader: React.FC = () => {
         
         <MainNavigation />
         
-        <img 
-          src="/lovable-uploads/bb65a9d8-dd53-48ec-939a-085a969d4bcb.png" 
-          alt="Renouveau Pédagogique" 
-          className="h-16 object-contain hover:scale-105 transition-transform duration-300"
-        />
+        <div className="w-16"></div> {/* Espace vide pour l'équilibre visuel */}
       </div>
       
       {/* Image de fond du header avec overlay et animation */}

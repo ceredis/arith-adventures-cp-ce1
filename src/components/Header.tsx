@@ -11,11 +11,7 @@ const Header = () => {
         className="h-16 object-contain"
       />
       <MainNavigation />
-      <img 
-        src="/lovable-uploads/bb65a9d8-dd53-48ec-939a-085a969d4bcb.png" 
-        alt="Renouveau Pédagogique" 
-        className="h-16 object-contain"
-      />
+      <div className="w-16"></div> {/* Espace vide pour conserver l'équilibre dans la mise en page */}
     </header>
   );
 };

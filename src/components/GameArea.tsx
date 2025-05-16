@@ -24,11 +24,14 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
     TOTAL_QUESTIONS,
     score,
     vennDiagramCompleted,
+    isSoustractionMode,
+    firstColorIsRed,
     handleSubmitRed,
     handleSubmitBlue,
     handleSubmitTotal,
     handleSubmitVennDiagram,
     handleSubmitEquation,
+    handleSubmitSecondColor,
     handleContinue,
     handleRestart,
     startGame
@@ -45,13 +48,15 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         countingPhase={
           phase === 'redCount' ? 'red' : 
           phase === 'blueCount' ? 'blue' : 
-          phase === 'verify' ? 'total' : 'none'
+          phase === 'totalCount' || phase === 'totalFirst' ? 'total' : 
+          phase === 'secondColor' ? (firstColorIsRed ? 'blue' : 'red') :
+          'none'
         }
         level={moduleLevel}
       />
       
-      {/* Diagramme de Venn uniquement pour les niveaux > 1 */}
-      {moduleLevel > 1 && (
+      {/* Diagramme de Venn uniquement pour les niveaux > 2 (module 2) */}
+      {moduleLevel > 2 && (
         <VennDiagram
           redBalls={redBalls}
           blueBalls={blueBalls}
@@ -60,8 +65,8 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         />
       )}
       
-      {/* Saisie de l'équation uniquement pour les niveaux > 1 */}
-      {moduleLevel > 1 && (
+      {/* Saisie de l'équation uniquement pour les niveaux > 2 (module 2) */}
+      {moduleLevel > 2 && (
         <EquationInput
           redBalls={redBalls}
           blueBalls={blueBalls}
@@ -78,6 +83,7 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         onSubmitRed={handleSubmitRed}
         onSubmitBlue={handleSubmitBlue}
         onSubmitTotal={handleSubmitTotal}
+        onSubmitSecondColor={handleSubmitSecondColor}
         onContinue={handleContinue}
         onRestart={handleRestart}
         onStart={startGame}
@@ -89,6 +95,8 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         userRedCount={userRedCount}
         userBlueCount={userBlueCount}
         vennDiagramCompleted={vennDiagramCompleted}
+        isSoustractionMode={isSoustractionMode}
+        firstColorIsRed={firstColorIsRed}
       />
     </div>
   );

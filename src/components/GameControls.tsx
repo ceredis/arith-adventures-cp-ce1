@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import CalculationPopup from './CalculationPopup';
 
 interface GameControlsProps {
-  phase: 'intro' | 'redCount' | 'blueCount' | 'totalCount' | 'vennDiagram' | 'equation' | 'verify' | 'result';
+  phase: 'intro' | 'redCount' | 'blueCount' | 'totalCount' | 'vennDiagram' | 'equation' | 'verify' | 'result' | 'totalFirst' | 'secondColor';
   redBalls: number;
   blueBalls: number;
   onSubmitRed: (count: number) => void;
   onSubmitBlue: (count: number) => void;
   onSubmitTotal: (count: number) => void;
+  onSubmitSecondColor?: (count: number) => void;
   onContinue: () => void;
   onRestart: () => void;
   onStart: () => void;
@@ -22,6 +23,8 @@ interface GameControlsProps {
   userRedCount?: number;
   userBlueCount?: number;
   vennDiagramCompleted?: boolean;
+  isSoustractionMode?: boolean;
+  firstColorIsRed?: boolean;
 }
 
 const GameControls: React.FC<GameControlsProps> = ({
@@ -31,6 +34,7 @@ const GameControls: React.FC<GameControlsProps> = ({
   onSubmitRed,
   onSubmitBlue,
   onSubmitTotal,
+  onSubmitSecondColor,
   onContinue,
   onRestart,
   onStart,
@@ -41,24 +45,30 @@ const GameControls: React.FC<GameControlsProps> = ({
   gameModule,
   userRedCount = 0,
   userBlueCount = 0,
-  vennDiagramCompleted = false
+  vennDiagramCompleted = false,
+  isSoustractionMode = false,
+  firstColorIsRed = true
 }) => {
   const [redCount, setRedCount] = useState<string>('');
   const [blueCount, setBlueCount] = useState<string>('');
   const [totalCount, setTotalCount] = useState<string>('');
+  const [secondColorCount, setSecondColorCount] = useState<string>('');
   const [calculationOpen, setCalculationOpen] = useState(false);
   
   // Reset inputs when phase changes
   useEffect(() => {
     if (phase === 'redCount') setRedCount('');
     if (phase === 'blueCount') setBlueCount('');
-    if (phase === 'totalCount') setTotalCount('');
+    if (phase === 'totalCount' || phase === 'totalFirst') setTotalCount('');
+    if (phase === 'secondColor') setSecondColorCount('');
     
     // Debug logs
     if (phase === 'redCount') console.log(`Phase comptage billes rouges: ${redBalls} billes`);
     if (phase === 'blueCount') console.log(`Phase comptage billes bleues: ${blueBalls} billes`);
     if (phase === 'totalCount') console.log(`Phase total: ${redBalls + blueBalls} billes au total, vennDiagramCompleted=${vennDiagramCompleted}`);
-  }, [phase, redBalls, blueBalls, vennDiagramCompleted]);
+    if (phase === 'totalFirst') console.log(`Phase total first: ${redBalls + blueBalls} billes au total, mode soustraction`);
+    if (phase === 'secondColor') console.log(`Phase second color: attendu=${firstColorIsRed ? blueBalls : redBalls} billes`);
+  }, [phase, redBalls, blueBalls, vennDiagramCompleted, isSoustractionMode, firstColorIsRed]);
   
   const handleRedSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,6 +94,15 @@ const GameControls: React.FC<GameControlsProps> = ({
     console.log(`Soumission total: ${parsedValue}`);
     if (!isNaN(parsedValue)) {
       onSubmitTotal(parsedValue);
+    }
+  };
+  
+  const handleSecondColorSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const parsedValue = parseInt(secondColorCount);
+    console.log(`Soumission second type: ${parsedValue}`);
+    if (!isNaN(parsedValue) && onSubmitSecondColor) {
+      onSubmitSecondColor(parsedValue);
     }
   };
 
@@ -155,10 +174,10 @@ const GameControls: React.FC<GameControlsProps> = ({
         </form>
       )}
       
-      {phase === 'totalCount' && (
+      {(phase === 'totalCount' || phase === 'totalFirst') && (
         <form onSubmit={handleTotalSubmit} className="flex flex-wrap items-center justify-center gap-2">
           <div className="w-full text-center mb-2">
-            {userRedCount > 0 && userBlueCount > 0 && (
+            {phase === 'totalCount' && userRedCount > 0 && userBlueCount > 0 && (
               <p className="text-lg">Tu as compté {userRedCount} billes rouges et {userBlueCount} billes bleues.</p>
             )}
             <label htmlFor="totalCount" className="text-lg">Nombre total de billes:</label>
@@ -176,8 +195,8 @@ const GameControls: React.FC<GameControlsProps> = ({
           />
           <Button type="submit" className="ml-2">Valider</Button>
           
-          {/* Montrer le bouton Calculer seulement si niveau > 1 */}
-          {level > 1 && (
+          {/* Montrer le bouton Calculer seulement si niveau > 2 */}
+          {level > 2 && (
             <Button 
               type="button" 
               onClick={() => setCalculationOpen(true)}
@@ -192,6 +211,28 @@ const GameControls: React.FC<GameControlsProps> = ({
               Calculer
             </Button>
           )}
+        </form>
+      )}
+      
+      {phase === 'secondColor' && (
+        <form onSubmit={handleSecondColorSubmit} className="flex flex-wrap items-center justify-center gap-2">
+          <div className="w-full text-center mb-2">
+            <label htmlFor="secondColorCount" className="text-lg">
+              Nombre de billes {firstColorIsRed ? 'bleues' : 'rouges'}:
+            </label>
+          </div>
+          <Input
+            id="secondColorCount"
+            type="number"
+            min="0"
+            max="50"
+            value={secondColorCount}
+            onChange={(e) => setSecondColorCount(e.target.value)}
+            className={inputStyle}
+            required
+            autoFocus
+          />
+          <Button type="submit" className="ml-2">Valider</Button>
         </form>
       )}
       
