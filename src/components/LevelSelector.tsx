@@ -16,10 +16,10 @@ const LevelSelector: React.FC<LevelSelectorProps> = ({
   onChangeModule,
   onChangeLevel
 }) => {
-  // Déterminer quels niveaux afficher selon le module sélectionné
+  // Determine which levels to display based on selected module
   const availableLevels = gameModule === 1 
-    ? [1, 2] // Module 1: niveaux 1 et 2
-    : [3, 4, 5]; // Module 2: niveaux 3, 4 et 5
+    ? [1, 2] // Module 1: levels 1 and 2
+    : [3, 4, 5]; // Module 2: levels 3, 4 and 5
 
   return (
     <div className="mb-6">

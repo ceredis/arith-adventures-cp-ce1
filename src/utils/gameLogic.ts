@@ -11,7 +11,7 @@ export const generateRandomBalls = (maxBalls: number, gameModule: GameModule = 1
   let redBalls: number;
   let blueBalls: number;
   
-  // Définir la limite maximale selon le niveau
+  // Define maximum limit based on level
   let maxSum: number;
   switch (moduleLevel) {
     case 1: 
@@ -22,27 +22,27 @@ export const generateRandomBalls = (maxBalls: number, gameModule: GameModule = 1
     default: maxSum = 5;
   }
   
-  if (gameModule === 1) { // Module 1: Addition seulement (niveau 1 et 2)
-    // Générer des nombres dont la somme ne dépasse pas maxSum
-    redBalls = 1 + Math.floor(Math.random() * (maxSum - 2)); // Au moins 1, au plus maxSum-2
-    blueBalls = 1 + Math.floor(Math.random() * (maxSum - redBalls - 1)); // Au moins 1, max possible
-  } else if (gameModule === 2) { // Module 2: Soustraction et additions variées
-    if (moduleLevel >= 3) { // Anciennement niveau 2, 3 et 4
-      // Pour les niveaux supérieurs, même logique que précédemment, mais sommes plus élevées
+  if (gameModule === 1) { // Module 1: Addition only (level 1 and 2)
+    // Generate numbers with sum not exceeding maxSum
+    redBalls = 1 + Math.floor(Math.random() * (maxSum - 2)); // At least 1, at most maxSum-2
+    blueBalls = 1 + Math.floor(Math.random() * (maxSum - redBalls - 1)); // At least 1, max possible
+  } else if (gameModule === 2) { // Module 2: Subtraction and various additions
+    if (moduleLevel >= 3) { // Formerly levels 2, 3 and 4
+      // For higher levels, same logic as before, but higher sums
       redBalls = 1 + Math.floor(Math.random() * Math.min(maxSum - 2, maxSum / 2));
       blueBalls = 1 + Math.floor(Math.random() * Math.min(maxSum - redBalls - 1, maxSum / 2));
     } else {
-      // Cas qui ne devrait pas arriver, mais par précaution
+      // Case that shouldn't happen, but as precaution
       redBalls = 1 + Math.floor(Math.random() * 3);
       blueBalls = 1 + Math.floor(Math.random() * 3);
     }
   } else {
-    // Cas par défaut
+    // Default case
     redBalls = 1 + Math.floor(Math.random() * 3);
     blueBalls = 1 + Math.floor(Math.random() * 3);
   }
 
-  console.log(`Génération: redBalls=${redBalls}, blueBalls=${blueBalls}, somme=${redBalls + blueBalls}, maxSum=${maxSum}, module=${gameModule}, niveau=${moduleLevel}`);
+  console.log(`Generation: redBalls=${redBalls}, blueBalls=${blueBalls}, sum=${redBalls + blueBalls}, maxSum=${maxSum}, module=${gameModule}, level=${moduleLevel}`);
   return { redBalls, blueBalls };
 };
 
@@ -60,7 +60,7 @@ export const getPhaseMessage = (
   isSoustractionMode: boolean = false,
   firstColorIsRed: boolean = true
 ) => {
-  // Mode soustraction spécifique au niveau 2 du module 1
+  // Subtraction mode specific to level 2 of module 1
   if (gameModule === 1 && moduleLevel === 2 && isSoustractionMode) {
     switch (phase) {
       case 'intro':
@@ -68,10 +68,9 @@ export const getPhaseMessage = (
       case 'totalFirst':
         return "Compte le nombre total de billes rouges et bleues qu'il y a sur le plateau et écris le nombre que tu vas trouver.";
       case 'redCount':
+        return "Compte les billes rouges et écris le nombre que tu vas trouver.";
       case 'blueCount':
-        return firstColorIsRed ? 
-          "Compte les billes rouges et écris le nombre que tu vas trouver." :
-          "Compte les billes bleues et écris le nombre que tu vas trouver.";
+        return "Compte les billes bleues et écris le nombre que tu vas trouver.";
       case 'secondColor':
         const firstColorName = firstColorIsRed ? "rouges" : "bleues";
         const secondColorName = firstColorIsRed ? "bleues" : "rouges";
@@ -91,7 +90,7 @@ export const getPhaseMessage = (
     }
   }
 
-  // Mode standard (addition)
+  // Standard mode (addition)
   switch (phase) {
     case 'intro':
       return "Bonjour ! Bienvenue au jeu de calcul ! Pour débuter, clique sur Commencer.";
@@ -100,7 +99,7 @@ export const getPhaseMessage = (
     case 'blueCount':
       return "Maintenant, compte les billes bleues et écris le nombre que tu vas trouver.";
     case 'totalCount':
-      // Message adapté selon le niveau
+      // Message adapted based on level
       if (moduleLevel <= 2) {
         return `Tu as compté ${redCount} billes rouges et ${blueCount} billes bleues. Quel est le nombre total de billes ?`;
       } else {

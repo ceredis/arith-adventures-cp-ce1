@@ -11,8 +11,8 @@ type GamePhase =
   | 'equation' 
   | 'verify' 
   | 'result'
-  | 'totalFirst'   // Nouvelle phase pour le niveau 2 du module 1 (soustraction)
-  | 'secondColor'; // Nouvelle phase pour demander le second type de couleur
+  | 'totalFirst'   // Phase for Module 1 Level 2 (subtraction)
+  | 'secondColor'; // Phase to ask for second color count
 
 const TOTAL_QUESTIONS = 5;
 
@@ -35,7 +35,7 @@ export const useGameState = () => {
   const [vennDiagramCompleted, setVennDiagramCompleted] = useState(false);
   const [equationCompleted, setEquationCompleted] = useState(false);
   
-  // Pour le niveau 2 du module 1 (mode soustraction)
+  // For Module 1 Level 2 (subtraction mode)
   const [isSoustractionMode, setIsSoustractionMode] = useState(false);
   const [firstColorIsRed, setFirstColorIsRed] = useState(true);
   const [userSecondColorCount, setUserSecondColorCount] = useState(0);
@@ -64,16 +64,18 @@ export const useGameState = () => {
     setSpeak(true);
   }, [phase, userRedCount, userBlueCount, userTotalCount, redBalls, blueBalls, totalAttempts, score, gameModule, moduleLevel, isSoustractionMode, firstColorIsRed]);
   
-  const startGame = () => {
-    // Réinitialiser l'état du jeu
+  // Initialize a new round with consistent state
+  const initNewRound = () => {
+    // Reset state for new round
     setVennDiagramCompleted(false);
     setEquationCompleted(false);
     setUserRedCount(0);
     setUserBlueCount(0);
     setUserTotalCount(0);
     setUserSecondColorCount(0);
+    setTotalAttempts(0);
     
-    // Calculer maxBalls selon le niveau
+    // Calculate maxBalls based on level
     let maxBalls;
     switch(moduleLevel) {
       case 1: 
@@ -84,17 +86,20 @@ export const useGameState = () => {
       default: maxBalls = 10;
     }
     
-    // Générer les billes
+    // Generate balls
     const { redBalls: red, blueBalls: blue } = generateRandomBalls(maxBalls, gameModule, moduleLevel);
     setRedBalls(red);
     setBlueBalls(blue);
     
-    // Pour le niveau 2 du module 1, 50% de chance d'avoir un problème de soustraction
+    // For Module 1 Level 2, determine if it's a subtraction problem
     if (gameModule === 1 && moduleLevel === 2) {
-      setIsSoustractionMode(Math.random() < 0.5);
-      setFirstColorIsRed(Math.random() < 0.5);
+      const soustraction = Math.random() < 0.5;
+      const redFirst = Math.random() < 0.5;
       
-      if (isSoustractionMode) {
+      setIsSoustractionMode(soustraction);
+      setFirstColorIsRed(redFirst);
+      
+      if (soustraction) {
         setPhase('totalFirst');
       } else {
         setPhase('redCount');
@@ -105,16 +110,23 @@ export const useGameState = () => {
     }
     
     setShowBalls(true);
-    console.log(`Game started with module ${gameModule}, level ${moduleLevel}: red=${red}, blue=${blue}, soustraction=${isSoustractionMode}`);
+    console.log(`New round initialized: module=${gameModule}, level=${moduleLevel}, red=${red}, blue=${blue}, soustraction=${isSoustractionMode}`);
+  };
+  
+  const startGame = () => {
+    // Reset game state and start first round
+    setQuestionNumber(1);
+    setScore(0);
+    initNewRound();
   };
   
   const handleSubmitRed = (count: number | string) => {
-    // Conversion en nombre si c'est une chaîne
+    // Convert to number if it's a string
     const parsedCount = typeof count === 'string' ? parseInt(count) : count;
     
-    console.log(`Vérification billes rouges: entrée=${parsedCount}, réel=${redBalls}`);
+    console.log(`Red ball validation: input=${parsedCount}, actual=${redBalls}`);
     
-    // Comparer avec le nombre réel de billes rouges
+    // Compare with actual number of red balls
     if (!isNaN(parsedCount) && parsedCount === redBalls) {
       setUserRedCount(parsedCount);
       setPhase('blueCount');
@@ -125,22 +137,23 @@ export const useGameState = () => {
   };
   
   const handleSubmitBlue = (count: number | string) => {
-    // Conversion en nombre si c'est une chaîne
+    // Convert to number if it's a string
     const parsedCount = typeof count === 'string' ? parseInt(count) : count;
     
-    console.log(`Vérification billes bleues: entrée=${parsedCount}, réel=${blueBalls}`);
+    console.log(`Blue ball validation: input=${parsedCount}, actual=${blueBalls}`);
     
-    // Comparer avec le nombre réel de billes bleues
+    // Compare with actual number of blue balls
     if (!isNaN(parsedCount) && parsedCount === blueBalls) {
       setUserBlueCount(parsedCount);
       
-      // Déterminer la phase suivante selon le module et le niveau
+      // Determine next phase based on module and level
       if (gameModule === 1) {
-        // Module 1 : niveaux 1 et 2, uniquement manipulation (pas de diagramme Venn)
+        // Module 1: levels 1 and 2, only manipulation (no Venn diagram)
         setPhase('totalCount');
-        setShowBalls(true);
+        // Hide balls during total count phase to encourage calculation
+        setShowBalls(false);
       } else if (moduleLevel >= 3) {
-        // Module 2 : niveaux 3, 4, 5 avec diagramme Venn
+        // Module 2: levels 3, 4, 5 with Venn diagram
         setPhase('vennDiagram');
         setShowBalls(false);
       }
@@ -151,19 +164,19 @@ export const useGameState = () => {
   };
   
   const handleSubmitTotal = (count: number | string) => {
-    // Conversion en nombre si c'est une chaîne
+    // Convert to number if it's a string
     const parsedCount = typeof count === 'string' ? parseInt(count) : count;
     
-    console.log(`Vérification total: entrée=${parsedCount}, attendu=${redBalls + blueBalls}`);
+    console.log(`Total validation: input=${parsedCount}, expected=${redBalls + blueBalls}`);
     
     if (!isNaN(parsedCount)) {
       setUserTotalCount(parsedCount);
       setTotalAttempts(prev => prev + 1);
       
-      // Pour le mode soustraction du niveau 2 module 1
+      // For subtraction mode in Module 1 Level 2
       if (isSoustractionMode && gameModule === 1 && moduleLevel === 2) {
         if (parsedCount === redBalls + blueBalls) {
-          // Si le total est correct, passer à la phase de comptage du type de couleur choisi
+          // If total is correct, move to the phase of counting the selected color
           setPhase(firstColorIsRed ? 'redCount' : 'blueCount');
         } else {
           setMessage("Ce n'est pas le bon nombre total de billes. Compte à nouveau.");
@@ -171,13 +184,14 @@ export const useGameState = () => {
           return;
         }
       } else {
-        // Mode standard (addition)
+        // Standard mode (addition)
         if (parsedCount === redBalls + blueBalls) {
           // Correct answer
           setScore(prev => prev + 1);
-          setShowBalls(true);
         } 
         
+        // Show balls for verification
+        setShowBalls(true);
         setPhase('verify');
       }
     } else {
@@ -187,26 +201,26 @@ export const useGameState = () => {
   };
   
   const handleSubmitSecondColor = (count: number | string) => {
-    // Cette fonction est utilisée uniquement pour le niveau 2 du module 1 en mode soustraction
+    // This function is only used for Module 1 Level 2 in subtraction mode
     const parsedCount = typeof count === 'string' ? parseInt(count) : count;
     
-    // Le second type de couleur est bleu si le premier était rouge, et vice versa
+    // Second color is blue if first was red, and vice versa
     const expectedCount = firstColorIsRed ? blueBalls : redBalls;
     
-    console.log(`Vérification second type: entrée=${parsedCount}, attendu=${expectedCount}`);
+    console.log(`Second color validation: input=${parsedCount}, expected=${expectedCount}`);
     
     if (!isNaN(parsedCount)) {
       setUserSecondColorCount(parsedCount);
       setTotalAttempts(prev => prev + 1);
       
-      // Vérifier si la réponse est correcte
+      // Check if answer is correct
       const isCorrect = parsedCount === expectedCount;
       
       if (isCorrect) {
         setScore(prev => prev + 1);
       }
       
-      // Afficher les billes pour vérification et passer à la phase de vérification
+      // Show balls for verification and move to verification phase
       setShowBalls(true);
       setPhase('verify');
     } else {
@@ -216,7 +230,7 @@ export const useGameState = () => {
   };
   
   const handleSubmitVennDiagram = (redValue: number | string, blueValue: number | string) => {
-    // Conversion en nombres si ce sont des chaînes
+    // Convert to numbers if they're strings
     const parsedRedValue = typeof redValue === 'string' ? parseInt(redValue) : redValue;
     const parsedBlueValue = typeof blueValue === 'string' ? parseInt(blueValue) : blueValue;
     
@@ -231,7 +245,7 @@ export const useGameState = () => {
   };
   
   const handleSubmitEquation = (operation: string, answer: number | string) => {
-    // Conversion en nombre si c'est une chaîne
+    // Convert to number if it's a string
     const parsedAnswer = typeof answer === 'string' ? parseInt(answer) : answer;
     
     if (isNaN(parsedAnswer)) {
@@ -243,8 +257,8 @@ export const useGameState = () => {
     setUserTotalCount(parsedAnswer);
     setTotalAttempts(prev => prev + 1);
     
-    // Valider l'opération (doit contenir le nombre de billes rouges et bleues)
-    const operationStr = operation.replace(/\s/g, ''); // Supprime les espaces
+    // Validate operation (must contain the number of red and blue balls)
+    const operationStr = operation.replace(/\s/g, ''); // Remove spaces
     const expectedOperation = `${redBalls}+${blueBalls}`;
     const alternativeOperation = `${blueBalls}+${redBalls}`;
     
@@ -258,14 +272,14 @@ export const useGameState = () => {
       setEquationCompleted(true);
       setPhase('verify');
     } else {
-      // Message pour indiquer ce qui est incorrect
+      // Message to indicate what is incorrect
       if (!isOperationCorrect) {
         setMessage(`L'opération n'est pas correcte. Réessaie de l'écrire correctement.`);
       } else {
         setMessage(`Le résultat n'est pas correct. Réessaie de calculer.`);
       }
       setSpeak(true);
-      return; // Ne pas continuer à la vérification
+      return; // Don't continue to verification
     }
   };
   
@@ -273,49 +287,8 @@ export const useGameState = () => {
     if (questionNumber < TOTAL_QUESTIONS) {
       // Move to next question
       setQuestionNumber(prev => prev + 1);
-      
-      // Réinitialiser l'état du jeu pour la nouvelle question
-      setTotalAttempts(0);
-      setUserRedCount(0);
-      setUserBlueCount(0);
-      setUserTotalCount(0);
-      setUserSecondColorCount(0);
-      setVennDiagramCompleted(false);
-      setEquationCompleted(false);
-      
-      // Calculer maxBalls selon le niveau
-      let maxBalls;
-      switch(moduleLevel) {
-        case 1: 
-        case 2: maxBalls = 5; break;
-        case 3: maxBalls = 10; break;
-        case 4: maxBalls = 20; break;
-        case 5: maxBalls = 50; break;
-        default: maxBalls = 10;
-      }
-      
-      // Générer de nouvelles billes
-      const { redBalls: red, blueBalls: blue } = generateRandomBalls(maxBalls, gameModule, moduleLevel);
-      setRedBalls(red);
-      setBlueBalls(blue);
-      
-      // Pour le niveau 2 du module 1, 50% de chance d'avoir un problème de soustraction
-      if (gameModule === 1 && moduleLevel === 2) {
-        setIsSoustractionMode(Math.random() < 0.5);
-        setFirstColorIsRed(Math.random() < 0.5);
-        
-        if (isSoustractionMode) {
-          setPhase('totalFirst');
-        } else {
-          setPhase('redCount');
-        }
-      } else {
-        setIsSoustractionMode(false);
-        setPhase('redCount');
-      }
-      
-      setShowBalls(true);
-      console.log("Next question with:", { red, blue, module: gameModule, level: moduleLevel, soustraction: isSoustractionMode });
+      // Initialize new round for the next question
+      initNewRound();
     } else {
       // End of game
       setPhase('result');
@@ -339,22 +312,22 @@ export const useGameState = () => {
   
   const handleChangeModule = (newModule: GameModule) => {
     setGameModule(newModule);
-    // Réinitialiser au niveau approprié selon le module
+    // Reset to appropriate level based on module
     if (newModule === 1) {
-      setModuleLevel(1); // Module 1 commence au niveau 1
+      setModuleLevel(1); // Module 1 starts at level 1
     } else {
-      setModuleLevel(3); // Module 2 commence au niveau 3
+      setModuleLevel(3); // Module 2 starts at level 3
     }
     handleRestart();
   };
   
   const handleChangeLevel = (newLevel: ModuleLevel) => {
-    // Vérifier si le niveau est valide pour le module actuel
+    // Check if level is valid for current module
     if (gameModule === 1 && newLevel > 2) {
-      // Le module 1 ne peut avoir que les niveaux 1 et 2
+      // Module 1 can only have levels 1 and 2
       return;
     } else if (gameModule === 2 && newLevel < 3) {
-      // Le module 2 commence au niveau 3
+      // Module 2 starts at level 3
       return;
     }
     

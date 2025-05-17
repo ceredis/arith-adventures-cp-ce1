@@ -55,7 +55,7 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         level={moduleLevel}
       />
       
-      {/* Diagramme de Venn uniquement pour les niveaux > 2 (module 2) */}
+      {/* Venn diagram only for levels > 2 (module 2) */}
       {moduleLevel > 2 && (
         <VennDiagram
           redBalls={redBalls}
@@ -65,7 +65,7 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
         />
       )}
       
-      {/* Saisie de l'équation uniquement pour les niveaux > 2 (module 2) */}
+      {/* Equation input only for levels > 2 (module 2) */}
       {moduleLevel > 2 && (
         <EquationInput
           redBalls={redBalls}

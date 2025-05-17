@@ -11,7 +11,7 @@ const Header = () => {
         className="h-16 object-contain"
       />
       <MainNavigation />
-      <div className="w-16"></div> {/* Espace vide pour conserver l'équilibre dans la mise en page */}
+      <div className="w-16"></div> {/* Empty space to maintain layout balance */}
     </header>
   );
 };
