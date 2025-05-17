@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { generateRandomBalls, getPhaseMessage, GameModule, ModuleLevel } from '@/utils/gameLogic';
 
@@ -129,7 +128,16 @@ export const useGameState = () => {
     // Compare with actual number of red balls
     if (!isNaN(parsedCount) && parsedCount === redBalls) {
       setUserRedCount(parsedCount);
-      setPhase('blueCount');
+      
+      // Check if we are in subtraction mode and this is the second color to count
+      if (isSoustractionMode && !firstColorIsRed) {
+        // In subtraction mode, if red is the second color, move to secondColor phase
+        setPhase('secondColor');
+        setShowBalls(false);
+      } else {
+        // Normal flow - go to blue count phase
+        setPhase('blueCount');
+      }
     } else {
       setMessage("Tu n'as pas bien compté, recommence.");
       setSpeak(true);
@@ -146,8 +154,12 @@ export const useGameState = () => {
     if (!isNaN(parsedCount) && parsedCount === blueBalls) {
       setUserBlueCount(parsedCount);
       
-      // Determine next phase based on module and level
-      if (gameModule === 1) {
+      // Check if we are in subtraction mode and this is the second color to count
+      if (isSoustractionMode && firstColorIsRed) {
+        // In subtraction mode, if blue is the second color, move to secondColor phase
+        setPhase('secondColor');
+        setShowBalls(false);
+      } else if (gameModule === 1) {
         // Module 1: levels 1 and 2, only manipulation (no Venn diagram)
         setPhase('totalCount');
         // Hide balls during total count phase to encourage calculation
