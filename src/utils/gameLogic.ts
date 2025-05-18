@@ -1,4 +1,3 @@
-
 interface RandomBalls {
   redBalls: number;
   blueBalls: number;
@@ -72,11 +71,12 @@ export const getPhaseMessage = (
       case 'blueCount':
         return "Compte les billes bleues et écris le nombre que tu vas trouver.";
       case 'secondColor':
+        // Correction : afficher la consigne attendue
         const firstColorName = firstColorIsRed ? "rouges" : "bleues";
         const secondColorName = firstColorIsRed ? "bleues" : "rouges";
         const firstColorCount = firstColorIsRed ? redCount : blueCount;
         const totalBalls = redCount + blueCount;
-        return `Tu as compté ${totalBalls} billes en tout et, parmi ces ${totalBalls} billes, il y avait ${firstColorCount} billes ${firstColorName}. Combien y avait-il de billes ${secondColorName} ? Réfléchis et écris le nombre que tu vas trouver.`;
+        return `Tu as compté ${totalBalls} billes en tout et, parmi ces ${totalBalls} billes, il y avait ${firstColorCount} billes ${firstColorName}. Quel est le nombre de billes ${secondColorName} ? Réfléchis et écris le nombre que tu vas trouver.`;
       case 'verify':
         if (isCorrect) {
           return `Bravo ! Le nombre de billes ${firstColorIsRed ? "bleues" : "rouges"} est bien ${firstColorIsRed ? blueCount : redCount}. J'ai remis les billes sur le plateau pour que tu puisses vérifier.`;

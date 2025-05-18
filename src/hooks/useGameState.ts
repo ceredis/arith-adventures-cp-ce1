@@ -41,11 +41,6 @@ export const useGameState = () => {
   
   // Set initial message
   useEffect(() => {
-    setMessage(getPhaseMessage(phase, gameModule, moduleLevel));
-  }, [gameModule, moduleLevel]);
-  
-  // Update message when phase changes
-  useEffect(() => {
     setMessage(getPhaseMessage(
       phase,
       gameModule,
@@ -60,8 +55,21 @@ export const useGameState = () => {
       isSoustractionMode,
       firstColorIsRed
     ));
-    setSpeak(true);
-  }, [phase, userRedCount, userBlueCount, userTotalCount, redBalls, blueBalls, totalAttempts, score, gameModule, moduleLevel, isSoustractionMode, firstColorIsRed]);
+  // Ajout de dépendances pour garantir la mise à jour correcte du message lors de la phase secondColor
+  }, [
+    phase,
+    gameModule,
+    moduleLevel,
+    userRedCount,
+    userBlueCount,
+    userTotalCount,
+    redBalls,
+    blueBalls,
+    totalAttempts,
+    score,
+    isSoustractionMode,
+    firstColorIsRed
+  ]);
   
   // Initialize a new round with consistent state
   const initNewRound = () => {
