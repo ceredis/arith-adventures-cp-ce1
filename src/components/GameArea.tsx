@@ -4,7 +4,7 @@ import GameScene from '@/components/GameScene';
 import VennDiagram from '@/components/VennDiagram';
 import EquationInput from '@/components/EquationInput';
 import GameControls from '@/components/GameControls';
-import { GameState } from '@/hooks/useGameState';
+import { GameState } from '@/hooks/gameState/useGameState';
 import { useGamification } from '@/contexts/GamificationContext';
 import { ProgressBar, ScoreCounter, StarRating } from '@/components/gamification';
 import { Trophy } from 'lucide-react';
