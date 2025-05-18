@@ -23,6 +23,7 @@ const GameArea: React.FC<GameAreaProps> = ({ gameState }) => {
     blueBalls,
     userRedCount,
     userBlueCount,
+    userTotalCount,  // Added this line to fix the error
     showBalls,
     questionNumber,
     TOTAL_QUESTIONS,
