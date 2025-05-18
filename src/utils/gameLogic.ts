@@ -45,6 +45,11 @@ export const generateRandomBalls = (maxBalls: number, gameModule: GameModule = 1
   return { redBalls, blueBalls };
 };
 
+// Calculate points based on attempts
+export const calculatePoints = (attempts: number, maxPoints: number = 10): number => {
+  return Math.max(maxPoints - (attempts - 1) * 2, 1);
+};
+
 export const getPhaseMessage = (
   phase: 'intro' | 'redCount' | 'blueCount' | 'totalCount' | 'vennDiagram' | 'equation' | 'verify' | 'result' | 'totalFirst' | 'secondColor',
   gameModule: GameModule = 1,

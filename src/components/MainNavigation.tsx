@@ -1,54 +1,53 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Book, Pencil, Calculator, Home } from 'lucide-react';
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink } from '@/components/ui/navigation-menu';
-import { cn } from "@/lib/utils";
+import { useGamification } from '@/contexts/GamificationContext';
+import { Trophy } from 'lucide-react';
+import { Badge } from './ui/badge';
 
-const MainNavigation: React.FC = () => {
+const MainNavigation = () => {
   const location = useLocation();
+  const { score } = useGamification();
+  
+  const isActive = (path: string) => {
+    return location.pathname === path ? 'text-blue-600 font-bold' : 'text-gray-600 hover:text-blue-600';
+  };
   
   return (
-    <NavigationMenu className="mx-auto">
-      <NavigationMenuList className="gap-6">
-        <NavigationMenuItem>
-          <Link to="/" className={cn(
-            "flex items-center gap-2 px-3 py-2 text-lg font-medium transition-colors hover:text-blue-600",
-            location.pathname === "/" ? "text-blue-600" : "text-gray-700"
-          )}>
-            <Home className="h-5 w-5" />
-            <span>Accueil</span>
+    <nav className="bg-white p-4 rounded-lg shadow-md">
+      <ul className="flex flex-wrap justify-center gap-8">
+        <li>
+          <Link to="/" className={`text-lg ${isActive('/')}`}>
+            Accueil
           </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link to="/numeration" className={cn(
-            "flex items-center gap-2 px-3 py-2 text-lg font-medium transition-colors hover:text-blue-600",
-            location.pathname === "/numeration" ? "text-blue-600" : "text-gray-700"
-          )}>
-            <Book className="h-5 w-5" />
-            <span>Numération</span>
+        </li>
+        <li>
+          <Link to="/numeration" className={`text-lg ${isActive('/numeration')}`}>
+            Numération
           </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link to="/calcul-ecrit" className={cn(
-            "flex items-center gap-2 px-3 py-2 text-lg font-medium transition-colors hover:text-blue-600", 
-            location.pathname === "/calcul-ecrit" ? "text-blue-600" : "text-gray-700"
-          )}>
-            <Pencil className="h-5 w-5" />
-            <span>Calcul écrit</span>
+        </li>
+        <li>
+          <Link to="/calcul-ecrit" className={`text-lg ${isActive('/calcul-ecrit')}`}>
+            Calcul écrit
           </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link to="/calcul-mental" className={cn(
-            "flex items-center gap-2 px-3 py-2 text-lg font-medium transition-colors hover:text-blue-600",
-            location.pathname === "/calcul-mental" ? "text-blue-600" : "text-gray-700"
-          )}>
-            <Calculator className="h-5 w-5" />
-            <span>Calcul mental</span>
+        </li>
+        <li>
+          <Link to="/calcul-mental" className={`text-lg ${isActive('/calcul-mental')}`}>
+            Calcul mental
           </Link>
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+        </li>
+        <li>
+          <Link 
+            to="/rewards" 
+            className={`flex items-center gap-2 text-lg ${isActive('/rewards')}`}
+          >
+            <Trophy className="h-5 w-5" />
+            Récompenses
+            {score > 0 && <Badge variant="secondary" className="ml-1">{score}</Badge>}
+          </Link>
+        </li>
+      </ul>
+    </nav>
   );
 };
 
